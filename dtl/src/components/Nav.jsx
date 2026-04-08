@@ -1,6 +1,12 @@
-import { C } from "../theme";
+const C = {
+  persian: "#1a3aff",
+  persianLight: "#4f6bff",
+  accent: "#00d4ff",
+  white: "#f0f4ff",
+  muted: "#8896cc",
+  cardBorder: "#1e2d6e",
+};
 
- 
 export default function Navbar({ onLogoClick, rightSlot }) {
   return (
     <>
@@ -8,6 +14,7 @@ export default function Navbar({ onLogoClick, rightSlot }) {
         href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet"
       />
+
       <nav
         style={{
           position: "sticky",
@@ -48,6 +55,7 @@ export default function Navbar({ onLogoClick, rightSlot }) {
           >
             E
           </div>
+
           <span
             style={{
               fontFamily: "'Syne', sans-serif",
@@ -60,10 +68,10 @@ export default function Navbar({ onLogoClick, rightSlot }) {
             Event<span style={{ color: C.persianLight }}>Ease</span>
           </span>
         </div>
- 
+
         {/* Center links */}
         <div style={{ display: "flex", gap: 32, fontSize: 14 }}>
-          {["Home", "Events", "Contacts","Register"].map((link) => (
+          {["Home", "Events", "Contacts", "Register"].map((link) => (
             <span
               key={link}
               onClick={link === "Events" ? onLogoClick : undefined}
@@ -79,7 +87,7 @@ export default function Navbar({ onLogoClick, rightSlot }) {
             </span>
           ))}
         </div>
- 
+
         {/* Right slot */}
         <div style={{ minWidth: 120, display: "flex", justifyContent: "flex-end" }}>
           {rightSlot || <div />}

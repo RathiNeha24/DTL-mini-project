@@ -1,36 +1,37 @@
 import { useState } from "react";
 
-// ── theme.js ──────────────────────────────────────────────────────
 const C = {
   navy:"#0a0f2c",navyMid:"#0d1540",persian:"#1a3aff",persianMid:"#2947e8",
   persianLight:"#4f6bff",persianGlow:"#1a3aff22",accent:"#00d4ff",
   accentSoft:"#00d4ff18",white:"#f0f4ff",muted:"#8896cc",
   cardBg:"#0e1645",cardBorder:"#1e2d6e",tagBg:"#1a2a6e",tagText:"#7eb8ff",
 };
+
 const categoryColors = {
   Hackathon:"#1a3aff",Conference:"#0066cc",Design:"#6b21a8",
   Competition:"#0e7c7b",Entrepreneurship:"#b45309",Workshop:"#1a3aff",
 };
 
-// ── data/events.js ────────────────────────────────────────────────
 const events = [
-  { id:1, title:"HackFest 2025", category:"Hackathon", date:"April 12, 2025", time:"9:00 AM", venue:"Main Auditorium", color:"#1a3aff", seats:200, registered:142, description:"36 hours of non-stop coding, collaboration, and creativity. Build projects that solve real-world problems. Mentors from top tech companies will guide you through every stage.", highlights:["$10,000 in prizes","Industry mentors","Free food & swag","Team size: 2–5"], organizer:"CS Department", tags:["Coding","Teams","Prizes"] },
-  { id:2, title:"TechTalks Summit", category:"Conference", date:"April 18, 2025", time:"10:00 AM", venue:"Seminar Hall B", color:"#0066cc", seats:300, registered:210, description:"Annual technology conference featuring keynotes, panel discussions, and workshops covering AI, Web3, and Cloud Computing.", highlights:["15+ speakers","Networking lunch","Certificate of attendance","Live Q&A sessions"], organizer:"Tech Club", tags:["AI","Cloud","Web3"] },
-  { id:3, title:"Designathon", category:"Design", date:"April 24, 2025", time:"11:00 AM", venue:"Innovation Lab", color:"#6b21a8", seats:80, registered:67, description:"A 24-hour design sprint where participants create stunning UI/UX prototypes for real-world problems. Judged by industry designers.", highlights:["Figma licenses","Design kit provided","Industry judges","Portfolio boost"], organizer:"Design Society", tags:["UI/UX","Figma","Design"] },
-  { id:4, title:"CyberSec CTF", category:"Competition", date:"May 2, 2025", time:"8:00 AM", venue:"Lab Block 3", color:"#0e7c7b", seats:120, registered:55, description:"Capture The Flag competition testing your cybersecurity skills across forensics, cryptography, web exploitation, and reverse engineering.", highlights:["Solo or pairs","Beginner track","Pro track","Leaderboard prizes"], organizer:"InfoSec Club", tags:["Security","CTF","Crypto"] },
-  { id:5, title:"Startup Pitch Night", category:"Entrepreneurship", date:"May 8, 2025", time:"5:00 PM", venue:"Conference Center", color:"#b45309", seats:150, registered:98, description:"Present your startup idea to a panel of investors and entrepreneurs. Get feedback, mentorship, and potential seed funding.", highlights:["Angel investors panel","Seed funding opportunity","Networking dinner","Media coverage"], organizer:"Entrepreneurship Cell", tags:["Startup","Funding","Pitch"] },
-  { id:6, title:"AI Workshop Series", category:"Workshop", date:"May 15, 2025", time:"2:00 PM", venue:"Smart Classroom 1", color:"#1a3aff", seats:60, registered:60, description:"Hands-on workshop series covering Machine Learning fundamentals, neural networks, and building AI apps with Python and modern frameworks.", highlights:["Hands-on projects","GPU compute access","Certificate","Free resources"], organizer:"AI Research Lab", tags:["ML","Python","Neural Nets"] },
+  { id:1, title:"HackFest 2026", category:"Hackathon", date:"April 12, 2026", time:"9:00 AM", venue:"Main Auditorium", color:"#1a3aff", seats:200, registered:142, description:"36 hours of non-stop coding, collaboration, and creativity. Build projects that solve real-world problems. Mentors from top tech companies will guide you through every stage.", highlights:["$10,000 in prizes","Industry mentors","Free food & swag","Team size: 2–5"], organizer:"CS Department", tags:["Coding","Teams","Prizes"] },
+  { id:2, title:"TechTalks Summit", category:"Conference", date:"April 18, 2026", time:"10:00 AM", venue:"Seminar Hall B", color:"#0066cc", seats:300, registered:210, description:"Annual technology conference featuring keynotes, panel discussions, and workshops covering AI, Web3, and Cloud Computing.", highlights:["15+ speakers","Networking lunch","Certificate of attendance","Live Q&A sessions"], organizer:"Tech Club", tags:["AI","Cloud","Web3"] },
+  { id:3, title:"Designathon", category:"Design", date:"April 24, 2026", time:"11:00 AM", venue:"Innovation Lab", color:"#6b21a8", seats:80, registered:67, description:"A 24-hour design sprint where participants create stunning UI/UX prototypes for real-world problems. Judged by industry designers.", highlights:["Figma licenses","Design kit provided","Industry judges","Portfolio boost"], organizer:"Design Society", tags:["UI/UX","Figma","Design"] },
+  { id:4, title:"CyberSec CTF", category:"Competition", date:"May 2, 2026", time:"8:00 AM", venue:"Lab Block 3", color:"#0e7c7b", seats:120, registered:55, description:"Capture The Flag competition testing your cybersecurity skills across forensics, cryptography, web exploitation, and reverse engineering.", highlights:["Solo or pairs","Beginner track","Pro track","Leaderboard prizes"], organizer:"InfoSec Club", tags:["Security","CTF","Crypto"] },
+  { id:5, title:"Startup Pitch Night", category:"Entrepreneurship", date:"May 8, 2026", time:"5:00 PM", venue:"Conference Center", color:"#b45309", seats:150, registered:98, description:"Present your startup idea to a panel of investors and entrepreneurs. Get feedback, mentorship, and potential seed funding.", highlights:["Angel investors panel","Seed funding opportunity","Networking dinner","Media coverage"], organizer:"Entrepreneurship Cell", tags:["Startup","Funding","Pitch"] },
+  { id:6, title:"AI Workshop Series", category:"Workshop", date:"May 15, 2026", time:"2:00 PM", venue:"Smart Classroom 1", color:"#1a3aff", seats:60, registered:60, description:"Hands-on workshop series covering Machine Learning fundamentals, neural networks, and building AI apps with Python and modern frameworks.", highlights:["Hands-on projects","GPU compute access","Certificate","Free resources"], organizer:"AI Research Lab", tags:["ML","Python","Neural Nets"] },
 ];
 
-// ── components/UI.jsx ─────────────────────────────────────────────
 const GlowOrb = ({ x, y, color=C.persian, size=300 }) => (
   <div style={{ position:"absolute", left:x, top:y, width:size, height:size, background:`radial-gradient(circle, ${color}18 0%, transparent 70%)`, borderRadius:"50%", pointerEvents:"none", zIndex:0 }} />
 );
+
 const CategoryBadge = ({ cat }) => {
   const color = categoryColors[cat] || C.persian;
   return <span style={{ display:"inline-block", padding:"3px 11px", borderRadius:20, fontSize:11, fontWeight:700, letterSpacing:"0.07em", textTransform:"uppercase", background:color+"22", color:color==="#1a3aff"?C.persianLight:color, border:`1px solid ${color}44`, fontFamily:"'Inter',sans-serif" }}>{cat}</span>;
 };
+
 const Tag = ({ label }) => <span style={{ padding:"4px 11px", borderRadius:20, fontSize:12, fontWeight:500, background:C.tagBg, color:C.tagText, border:"1px solid #2a3a8e", fontFamily:"'Inter',sans-serif" }}>{label}</span>;
+
 const SeatBar = ({ registered, seats }) => {
   const pct = Math.min((registered/seats)*100,100), full = registered>=seats;
   return (
@@ -45,33 +46,30 @@ const SeatBar = ({ registered, seats }) => {
   );
 };
 
-// ── components/Navbar.jsx ─────────────────────────────────────────
-function Navbar({ onLogoClick, rightSlot, activePage }) {
-  return (
-    <nav style={{ position:"sticky", top:0, zIndex:100, background:"#0a0f2ccc", backdropFilter:"blur(20px)", borderBottom:`1px solid ${C.cardBorder}`, padding:"0 40px", display:"flex", alignItems:"center", justifyContent:"space-between", height:64, boxSizing:"border-box" }}>
-      <div onClick={onLogoClick} style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}>
-        <div style={{ width:34, height:34, borderRadius:9, background:`linear-gradient(135deg,${C.persian},${C.accent})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:17, fontWeight:800, color:"#fff", fontFamily:"'Syne',sans-serif" }}>E</div>
-        <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:20, color:C.white }}>Event<span style={{ color:C.persianLight }}>Ease</span></span>
-      </div>
-      <div style={{ display:"flex", gap:32, fontSize:14 }}>
-        {["Events","Calendar","About"].map(l=>(
-          <span key={l} onClick={l==="Events"?onLogoClick:undefined} style={{ color:l==="Events"?C.persianLight:C.muted, fontWeight:l==="Events"?600:400, cursor:"pointer", fontFamily:"'Inter',sans-serif" }}>{l}</span>
-        ))}
-      </div>
-      <div style={{ minWidth:130, display:"flex", justifyContent:"flex-end" }}>{rightSlot||<div/>}</div>
-    </nav>
-  );
-}
-
-// ── pages/EventsListing.jsx ───────────────────────────────────────
 const symbolMap = { Hackathon:"⟨/⟩", Conference:"◈", Design:"◉", Competition:"⛬", Entrepreneurship:"◆", Workshop:"∿" };
 
 function EventCard({ event, onSelect }) {
   const [hovered,setHovered]=useState(false);
   const full=event.registered>=event.seats;
+
   return (
-    <div onClick={()=>onSelect(event)} onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)}
-      style={{ background:C.cardBg, border:`1px solid ${hovered?C.persian:C.cardBorder}`, borderRadius:16, overflow:"hidden", cursor:"pointer", transition:"all 0.28s ease", transform:hovered?"translateY(-5px)":"none", boxShadow:hovered?`0 14px 44px ${C.persian}33`:"0 2px 10px #00000045", display:"flex", flexDirection:"column" }}>
+    <div
+      onClick={()=>onSelect(event)}
+      onMouseEnter={()=>setHovered(true)}
+      onMouseLeave={()=>setHovered(false)}
+      style={{
+        background:C.cardBg,
+        border:`1px solid ${hovered?C.persian:C.cardBorder}`,
+        borderRadius:16,
+        overflow:"hidden",
+        cursor:"pointer",
+        transition:"all 0.28s ease",
+        transform:hovered?"translateY(-5px)":"none",
+        boxShadow:hovered?`0 14px 44px ${C.persian}33`:"0 2px 10px #00000045",
+        display:"flex",
+        flexDirection:"column"
+      }}
+    >
       <div style={{ height:5, background:`linear-gradient(90deg,${event.color},${C.accent})` }} />
       <div style={{ height:155, background:`linear-gradient(135deg,${event.color}20 0%,${C.navy} 100%)`, display:"flex", alignItems:"center", justifyContent:"center", position:"relative", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse at 30% 50%,${event.color}30 0%,transparent 60%)` }} />
@@ -102,18 +100,21 @@ function EventsListing({ onSelectEvent }) {
   const [search,setSearch]=useState("");
   const cats=["All",...Array.from(new Set(events.map(e=>e.category)))];
   const filtered=events.filter(e=>(filter==="All"||e.category===filter)&&(e.title.toLowerCase().includes(search.toLowerCase())||e.category.toLowerCase().includes(search.toLowerCase())));
+
   return (
     <div style={{ minHeight:"100vh", background:C.navy, fontFamily:"'Inter',sans-serif", position:"relative", overflow:"hidden" }}>
       <GlowOrb x="-100px" y="-80px" size={500}/>
       <GlowOrb x="62%" y="180px" color={C.accent} size={380}/>
       <GlowOrb x="25%" y="650px" color="#6b21a8" size={320}/>
       <Navbar onLogoClick={()=>{}}/>
+
       <div style={{ position:"relative", zIndex:1, padding:"68px 40px 46px", maxWidth:1100, margin:"0 auto" }}>
-        <div style={{ display:"inline-block", marginBottom:16, padding:"5px 16px", borderRadius:20, border:`1px solid ${C.persianLight}44`, background:C.persianGlow, fontSize:13, color:C.persianLight, letterSpacing:"0.08em" }}>SPRING SEMESTER 2025</div>
+        <div style={{ display:"inline-block", marginBottom:16, padding:"5px 16px", borderRadius:20, border:`1px solid ${C.persianLight}44`, background:C.persianGlow, fontSize:13, color:C.persianLight, letterSpacing:"0.08em" }}>SPRING SEMESTER 2026</div>
         <h1 style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, margin:"0 0 16px", fontSize:"clamp(36px,5vw,58px)", color:C.white, lineHeight:1.1, letterSpacing:"-0.02em" }}>
           Upcoming <span style={{ background:`linear-gradient(135deg,${C.persianLight},${C.accent})`, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Campus Events</span>
         </h1>
         <p style={{ fontSize:17, color:C.muted, margin:"0 0 40px", maxWidth:520, lineHeight:1.6 }}>Discover hackathons, workshops, conferences, and competitions happening across campus.</p>
+
         <div style={{ display:"flex", gap:14, flexWrap:"wrap", alignItems:"center" }}>
           <div style={{ position:"relative", flex:"1 1 260px" }}>
             <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", color:C.muted, fontSize:18 }}>⌕</span>
@@ -126,25 +127,28 @@ function EventsListing({ onSelectEvent }) {
           </div>
         </div>
       </div>
+
       <div style={{ position:"relative", zIndex:1, padding:"0 40px 80px", maxWidth:1100, margin:"0 auto" }}>
         <div style={{ marginBottom:20, fontSize:14, color:C.muted }}>Showing <strong style={{ color:C.white }}>{filtered.length}</strong> events</div>
         <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))", gap:24 }}>
           {filtered.map(e=><EventCard key={e.id} event={e} onSelect={onSelectEvent}/>)}
         </div>
-        {filtered.length===0&&<div style={{ textAlign:"center", padding:"80px 0", color:C.muted }}><div style={{ fontSize:48, marginBottom:16 }}>◌</div><div style={{ fontSize:18 }}>No events match your search</div></div>}
       </div>
     </div>
   );
 }
 
-// ── pages/EventDetails.jsx ────────────────────────────────────────
 function EventDetails({ event, onBack, onRegister }) {
+  if (!event) return null;
+
   const full=event.registered>=event.seats;
+
   return (
     <div style={{ minHeight:"100vh", background:C.navy, fontFamily:"'Inter',sans-serif", position:"relative", overflow:"hidden" }}>
       <GlowOrb x="-100px" y="80px" color={event.color} size={600}/>
       <GlowOrb x="55%" y="350px" color={C.accent} size={380}/>
       <Navbar onLogoClick={onBack} rightSlot={<button onClick={onBack} style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 18px", borderRadius:10, background:C.cardBg, border:`1px solid ${C.cardBorder}`, color:C.muted, cursor:"pointer", fontSize:14, fontFamily:"'Inter',sans-serif" }}>← All Events</button>}/>
+
       <div style={{ position:"relative", zIndex:1, height:270, background:`linear-gradient(135deg,${event.color}30 0%,${C.navyMid} 55%,${C.navy} 100%)`, display:"flex", alignItems:"center", borderBottom:`1px solid ${C.cardBorder}`, overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse at 20% 50%,${event.color}40 0%,transparent 55%)` }}/>
         <div style={{ position:"absolute", right:60, top:"50%", transform:"translateY(-50%)", opacity:0.06, fontSize:180, fontFamily:"'Syne',sans-serif", fontWeight:800, color:"#fff", userSelect:"none", whiteSpace:"nowrap" }}>{event.category.toUpperCase()}</div>
@@ -156,12 +160,14 @@ function EventDetails({ event, onBack, onRegister }) {
           </div>
         </div>
       </div>
+
       <div style={{ position:"relative", zIndex:1, maxWidth:1100, margin:"0 auto", padding:"48px 60px 80px", display:"grid", gridTemplateColumns:"1fr 330px", gap:44, alignItems:"start" }}>
         <div>
           <section style={{ marginBottom:40 }}>
             <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:22, color:C.white, margin:"0 0 16px" }}>About This Event</h2>
             <p style={{ color:C.muted, fontSize:16, lineHeight:1.85, margin:0 }}>{event.description}</p>
           </section>
+
           <section style={{ marginBottom:40 }}>
             <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:22, color:C.white, margin:"0 0 20px" }}>Event Highlights</h2>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
@@ -173,17 +179,20 @@ function EventDetails({ event, onBack, onRegister }) {
               ))}
             </div>
           </section>
+
           <section>
             <h2 style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:22, color:C.white, margin:"0 0 16px" }}>Tags</h2>
             <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>{event.tags.map(t=><Tag key={t} label={t}/>)}</div>
           </section>
         </div>
+
         <div style={{ position:"sticky", top:80 }}>
           <div style={{ background:C.cardBg, border:`1px solid ${C.cardBorder}`, borderRadius:20, padding:28, boxShadow:"0 20px 60px #00000060", marginBottom:14 }}>
             <div style={{ marginBottom:22 }}>
               <div style={{ fontSize:13, color:C.muted, marginBottom:12 }}>Registration Status</div>
               <SeatBar registered={event.registered} seats={event.seats}/>
             </div>
+
             <div style={{ display:"flex", flexDirection:"column", gap:13, marginBottom:24, borderTop:`1px solid ${C.cardBorder}`, paddingTop:18 }}>
               {[{label:"Date",val:event.date},{label:"Time",val:event.time},{label:"Venue",val:event.venue},{label:"Organizer",val:event.organizer}].map(r=>(
                 <div key={r.label} style={{ display:"flex", justifyContent:"space-between", fontSize:14 }}>
@@ -192,16 +201,10 @@ function EventDetails({ event, onBack, onRegister }) {
                 </div>
               ))}
             </div>
+
             <button onClick={()=>!full&&onRegister(event)} disabled={full} style={{ width:"100%", padding:"15px 0", borderRadius:12, border:"none", cursor:full?"default":"pointer", fontSize:15, fontWeight:700, letterSpacing:"0.03em", fontFamily:"'Syne',sans-serif", background:full?"#1e2040":`linear-gradient(135deg,${C.persian},${C.accent})`, color:full?C.muted:"#fff", transition:"all 0.25s ease" }}>
               {full?"Event Full":"Register Now →"}
             </button>
-            {!full&&<p style={{ textAlign:"center", fontSize:12, color:C.muted, margin:"10px 0 0" }}>Free · Confirmation sent via email</p>}
-          </div>
-          <div style={{ padding:"15px 20px", borderRadius:14, background:C.cardBg, border:`1px solid ${C.cardBorder}`, display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:14 }}>
-            <span style={{ color:C.muted }}>Share</span>
-            <div style={{ display:"flex", gap:9 }}>
-              {["𝕏","in","🔗"].map(s=><button key={s} style={{ width:34, height:34, borderRadius:8, background:C.navyMid, border:`1px solid ${C.cardBorder}`, color:C.white, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center" }}>{s}</button>)}
-            </div>
           </div>
         </div>
       </div>
@@ -209,7 +212,6 @@ function EventDetails({ event, onBack, onRegister }) {
   );
 }
 
-// ── pages/RegisterForm.jsx ────────────────────────────────────────
 const inputStyle = { width:"100%", padding:"12px 16px", borderRadius:10, background:"#0a1035", border:`1px solid ${C.cardBorder}`, color:C.white, fontSize:14, outline:"none", boxSizing:"border-box", fontFamily:"'Inter',sans-serif", transition:"border-color 0.2s" };
 const labelStyle = { display:"block", fontSize:13, fontWeight:500, color:C.muted, marginBottom:7, fontFamily:"'Inter',sans-serif", letterSpacing:"0.02em" };
 
@@ -300,8 +302,6 @@ function RegisterForm({ event, onBack, onHome }) {
         <div style={{ background:C.cardBg, border:`1px solid ${C.cardBorder}`, borderRadius:20, overflow:"hidden", boxShadow:"0 20px 60px #00000050" }}>
           <div style={{ height:5, background:`linear-gradient(90deg,${event.color},${C.accent})` }}/>
           <div style={{ padding:"36px 36px 40px" }}>
-
-            {/* Section 1 */}
             <div style={{ marginBottom:32 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:22 }}>
                 <div style={{ width:28, height:28, borderRadius:8, background:C.persian+"33", border:`1px solid ${C.persian}55`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>①</div>
@@ -314,10 +314,7 @@ function RegisterForm({ event, onBack, onHome }) {
                 <Field label="College / Institution *" error={errors.college}><input value={form.college} onChange={set("college")} onFocus={()=>setFocused("college")} onBlur={()=>setFocused(null)} placeholder="Your college name" style={{...inputStyle,...fs("college")}}/></Field>
               </div>
             </div>
-
             <div style={{ borderTop:`1px solid ${C.cardBorder}`, margin:"0 0 32px" }}/>
-
-            {/* Section 2 */}
             <div style={{ marginBottom:32 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:22 }}>
                 <div style={{ width:28, height:28, borderRadius:8, background:C.persian+"33", border:`1px solid ${C.persian}55`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>②</div>
@@ -333,10 +330,7 @@ function RegisterForm({ event, onBack, onHome }) {
                 <Field label="Branch / Department *" error={errors.branch}><input value={form.branch} onChange={set("branch")} onFocus={()=>setFocused("branch")} onBlur={()=>setFocused(null)} placeholder="e.g. Computer Engineering" style={{...inputStyle,...fs("branch")}}/></Field>
               </div>
             </div>
-
             <div style={{ borderTop:`1px solid ${C.cardBorder}`, margin:"0 0 32px" }}/>
-
-            {/* Section 3 */}
             <div style={{ marginBottom:32 }}>
               <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:22 }}>
                 <div style={{ width:28, height:28, borderRadius:8, background:C.persian+"33", border:`1px solid ${C.persian}55`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>③</div>
@@ -353,11 +347,9 @@ function RegisterForm({ event, onBack, onHome }) {
               </div>
               <Field label="Message / Special Requirements"><textarea value={form.message} onChange={set("message")} onFocus={()=>setFocused("message")} onBlur={()=>setFocused(null)} placeholder="Dietary restrictions, accessibility needs, or questions..." rows={4} style={{...inputStyle,...fs("message"),resize:"vertical",lineHeight:1.6}}/></Field>
             </div>
-
             <div style={{ padding:"14px 18px", borderRadius:10, background:"#0a1035", border:`1px solid ${C.cardBorder}`, marginBottom:28 }}>
               <p style={{ margin:0, fontSize:13, color:C.muted, lineHeight:1.6 }}>By registering, you agree to the event's <span style={{ color:C.persianLight, cursor:"pointer" }}>terms & conditions</span> and confirm the information is accurate.</p>
             </div>
-
             <button onClick={handleSubmit} style={{ width:"100%", padding:"16px 0", borderRadius:12, border:"none", cursor:"pointer", fontSize:16, fontWeight:700, letterSpacing:"0.03em", background:submitting?C.cardBorder:`linear-gradient(135deg,${C.persian},${C.accent})`, color:"#fff", fontFamily:"'Syne',sans-serif", transition:"all 0.3s ease", transform:submitting?"scale(0.99)":"scale(1)" }}>
               {submitting?"Submitting...":"Complete Registration →"}
             </button>
@@ -368,7 +360,6 @@ function RegisterForm({ event, onBack, onHome }) {
   );
 }
 
-// ── App.jsx (root router) ─────────────────────────────────────────
 const PAGE = { LISTING:"LISTING", DETAILS:"DETAILS", REGISTER:"REGISTER" };
 
 export default function App() {
