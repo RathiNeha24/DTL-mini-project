@@ -2,13 +2,13 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import { GlowOrb } from "../components/UI";
 import { C } from "../theme";
-
+ 
 // ─── RegisterForm Page ─────────────────────────────────────────────
 // Props:
 //   event       → event object
 //   onBack      → () => void  goes back to EventDetails
 //   onHome      → () => void  goes to EventsListing
-
+ 
 const inputStyle = {
   width: "100%",
   padding: "12px 16px",
@@ -22,7 +22,7 @@ const inputStyle = {
   fontFamily: "'Inter', sans-serif",
   transition: "border-color 0.2s",
 };
-
+ 
 const labelStyle = {
   display: "block",
   fontSize: 13,
@@ -32,7 +32,7 @@ const labelStyle = {
   fontFamily: "'Inter', sans-serif",
   letterSpacing: "0.02em",
 };
-
+ 
 const Field = ({ label, error, children }) => (
   <div style={{ display: "flex", flexDirection: "column" }}>
     <label style={labelStyle}>{label}</label>
@@ -44,7 +44,7 @@ const Field = ({ label, error, children }) => (
     )}
   </div>
 );
-
+ 
 export default function RegisterForm({ event, onBack, onHome }) {
   const [form, setForm] = useState({
     name: "", email: "", phone: "", college: "",
@@ -54,9 +54,9 @@ export default function RegisterForm({ event, onBack, onHome }) {
   const [focused, setFocused] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
+ 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-
+ 
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = "Full name is required";
@@ -69,26 +69,26 @@ export default function RegisterForm({ event, onBack, onHome }) {
     if (!form.branch.trim()) e.branch = "Branch/Department is required";
     return e;
   };
-
+ 
   const handleSubmit = () => {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setSubmitting(true);
     setTimeout(() => { setSubmitting(false); setSubmitted(true); }, 1200);
   };
-
+ 
   const focusStyle = (key) =>
     focused === key ? { borderColor: C.persian } : {};
-
+ 
   if (submitted) {
     return (
       <div style={{ minHeight: "100vh", background: C.navy, fontFamily: "'Inter', sans-serif", position: "relative", overflow: "hidden" }}>
         <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
         <GlowOrb x="10%" y="10%" color={event.color} size={500} />
         <GlowOrb x="60%" y="50%" color={C.accent} size={350} />
-
+ 
         <Navbar onLogoClick={onHome} />
-
+ 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 64px)", padding: "40px 20px", position: "relative", zIndex: 1 }}>
           <div style={{
             background: C.cardBg, border: `1px solid ${C.cardBorder}`,
@@ -103,7 +103,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 32,
             }}>✓</div>
-
+ 
             <h2 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 28, color: C.white, margin: "0 0 12px" }}>
               You're registered!
             </h2>
@@ -113,7 +113,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
             <p style={{ color: C.persianLight, fontSize: 17, fontWeight: 600, margin: "0 0 28px", fontFamily: "'Syne', sans-serif" }}>
               {event.title}
             </p>
-
+ 
             <div style={{
               background: "#0a1035", borderRadius: 12, padding: "16px 20px",
               marginBottom: 32, textAlign: "left",
@@ -129,11 +129,11 @@ export default function RegisterForm({ event, onBack, onHome }) {
                 </div>
               ))}
             </div>
-
+ 
             <p style={{ fontSize: 13, color: C.muted, marginBottom: 28 }}>
               A confirmation has been sent to <strong style={{ color: C.white }}>{form.email}</strong>
             </p>
-
+ 
             <div style={{ display: "flex", gap: 12 }}>
               <button
                 onClick={onBack}
@@ -162,15 +162,15 @@ export default function RegisterForm({ event, onBack, onHome }) {
       </div>
     );
   }
-
+ 
   return (
     <div style={{ minHeight: "100vh", background: C.navy, fontFamily: "'Inter', sans-serif", position: "relative", overflow: "hidden" }}>
       <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
+ 
       <GlowOrb x="-80px" y="60px" color={event.color} size={500} />
       <GlowOrb x="65%" y="300px" color={C.accent} size={380} />
       <GlowOrb x="30%" y="700px" color={C.persian} size={300} />
-
+ 
       <Navbar
         onLogoClick={onHome}
         rightSlot={
@@ -188,7 +188,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
           </button>
         }
       />
-
+ 
       {/* Page header */}
       <div style={{
         position: "relative", zIndex: 1,
@@ -207,7 +207,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
           <span style={{ color: C.muted, fontSize: 13 }}>·</span>
           <span style={{ color: C.muted, fontSize: 13 }}>{event.date}</span>
         </div>
-
+ 
         <h1 style={{
           fontFamily: "'Syne', sans-serif", fontWeight: 800, margin: "0 0 12px",
           fontSize: "clamp(28px, 4vw, 42px)", color: C.white, lineHeight: 1.1, letterSpacing: "-0.02em",
@@ -222,7 +222,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
           Fill in your details below. All fields marked are required.
         </p>
       </div>
-
+ 
       {/* Form card */}
       <div style={{ position: "relative", zIndex: 1, maxWidth: 720, margin: "0 auto", padding: "0 40px 80px" }}>
         <div style={{
@@ -230,19 +230,19 @@ export default function RegisterForm({ event, onBack, onHome }) {
           borderRadius: 20, overflow: "hidden",
           boxShadow: "0 20px 60px #00000050",
         }}>
-
+ 
           {/* Top color strip */}
           <div style={{ height: 5, background: `linear-gradient(90deg, ${event.color}, ${C.accent})` }} />
-
+ 
           <div style={{ padding: "36px 36px 40px" }}>
-
+ 
             {/* Section: Personal Info */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 8, background: C.persian + "33", border: `1px solid ${C.persian}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>①</div>
                 <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 16, color: C.white }}>Personal Information</span>
               </div>
-
+ 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
                 <Field label="Full Name *" error={errors.name}>
                   <input
@@ -278,17 +278,17 @@ export default function RegisterForm({ event, onBack, onHome }) {
                 </Field>
               </div>
             </div>
-
+ 
             {/* Divider */}
             <div style={{ borderTop: `1px solid ${C.cardBorder}`, margin: "0 0 32px" }} />
-
+ 
             {/* Section: Academic Info */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 8, background: C.persian + "33", border: `1px solid ${C.persian}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>②</div>
                 <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 16, color: C.white }}>Academic Details</span>
               </div>
-
+ 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
                 <Field label="Year of Study *" error={errors.year}>
                   <select
@@ -312,17 +312,17 @@ export default function RegisterForm({ event, onBack, onHome }) {
                 </Field>
               </div>
             </div>
-
+ 
             {/* Divider */}
             <div style={{ borderTop: `1px solid ${C.cardBorder}`, margin: "0 0 32px" }} />
-
+ 
             {/* Section: Event-specific */}
             <div style={{ marginBottom: 32 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
                 <div style={{ width: 28, height: 28, borderRadius: 8, background: C.persian + "33", border: `1px solid ${C.persian}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>③</div>
                 <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 16, color: C.white }}>Event Preferences</span>
               </div>
-
+ 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 18 }}>
                 <Field label="Team Name (if applicable)">
                   <input
@@ -345,7 +345,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
                   </select>
                 </Field>
               </div>
-
+ 
               <Field label="Message / Special Requirements">
                 <textarea
                   value={form.message} onChange={set("message")}
@@ -356,7 +356,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
                 />
               </Field>
             </div>
-
+ 
             {/* Terms */}
             <div style={{
               padding: "14px 18px", borderRadius: 10,
@@ -369,7 +369,7 @@ export default function RegisterForm({ event, onBack, onHome }) {
                 and confirm that the information provided is accurate.
               </p>
             </div>
-
+ 
             {/* Submit */}
             <button
               onClick={handleSubmit}
