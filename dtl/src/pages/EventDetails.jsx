@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Navbar from "../components/Nav";
 
 const C = {
   navy:"#0a0f2c",navyMid:"#0d1540",persian:"#1a3aff",persianMid:"#2947e8",
