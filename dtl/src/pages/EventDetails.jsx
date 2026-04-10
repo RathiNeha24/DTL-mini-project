@@ -107,8 +107,12 @@ const events = [
 ];
 
 const categoryColors = {
-  Hackathon:"#1a3aff",Conference:"#0066cc",Design:"#6b21a8",
-  Competition:"#0e7c7b",Entrepreneurship:"#b45309",Workshop:"#1a3aff",
+  Hackathon: "#1a3aff",
+  Conference: "#0066cc",
+  Design: "#6b21a8",
+  Competition: "#0e7c7b",
+  Entrepreneurship: "#b45309",
+  Workshop: "#1a3aff",
 };
 
 const CategoryBadge = ({ cat }) => {
@@ -189,7 +193,7 @@ const SeatBar = ({ registered, seats }) => {
 const EventCard = ({ event, onSelect }) => {
   const [hovered, setHovered] = useState(false);
 
-  const full = event.registered >= event.seats; // ✅ ADD THIS
+  const full = event.registered >= event.seats;
 
   const categorySymbol =
     event.category === "Hackathon"
@@ -206,9 +210,9 @@ const EventCard = ({ event, onSelect }) => {
 
   return (
     <div
-      onClick={()=>onSelect(event)}
-      onMouseEnter={()=>setHovered(true)}
-      onMouseLeave={()=>setHovered(false)}
+      onClick={() => onSelect(event)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       style={{
         background: COLORS.cardBg,
         border: `1px solid ${hovered ? COLORS.persian : COLORS.cardBorder}`,
@@ -276,7 +280,7 @@ const EventCard = ({ event, onSelect }) => {
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <CategoryBadge cat={event.category} />
-          {full&&<span style={{ fontSize:11, color:"#e24b4a", fontWeight:700 }}>FULL</span>}
+          {full && <span style={{ fontSize: 11, color: "#e24b4a", fontWeight: 700 }}>FULL</span>}
         </div>
 
         <div>
@@ -451,22 +455,36 @@ const EventsListing = ({ onSelect }) => {
   );
 };
 
-const EventDetails = ({ event, onBack }) => {
-  const [registered, setRegistered] = useState(false);
-  const [animating, setAnimating] = useState(false);
+const inputStyle = {
+  width: "100%",
+  padding: "12px 16px",
+  borderRadius: 10,
+  background: "#0a1035",
+  border: `1px solid ${COLORS.cardBorder}`,
+  color: COLORS.white,
+  fontSize: 14,
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const labelStyle = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 500,
+  color: COLORS.muted,
+  marginBottom: 7,
+};
+
+const Field = ({ label, error, children }) => (
+  <div style={{ display: "flex", flexDirection: "column" }}>
+    <label style={labelStyle}>{label}</label>
+    {children}
+    {error && <span style={{ fontSize: 12, color: "#e24b4a", marginTop: 5 }}>{error}</span>}
+  </div>
+);
+
+const EventDetails = ({ event, onBack, onRegister }) => {
   const full = event.registered >= event.seats;
-
-  const handleRegister = () => {
-    if (full || registered) {
-      return;
-    }
-
-    setAnimating(true);
-    setTimeout(() => {
-      setRegistered(true);
-      setAnimating(false);
-    }, 600);
-  };
 
   return (
     <PageShell
@@ -681,31 +699,28 @@ const EventDetails = ({ event, onBack }) => {
             </div>
 
             <button
-              onClick={handleRegister}
-              disabled={full || registered}
+              onClick={() => !full && onRegister(event)}
+              disabled={full}
               style={{
                 width: "100%",
                 padding: "15px 0",
                 borderRadius: 12,
                 border: "none",
-                cursor: full || registered ? "default" : "pointer",
+                cursor: full ? "default" : "pointer",
                 fontSize: 15,
                 fontWeight: 700,
-                background: registered
-                  ? "#0e7c7b"
-                  : full
+                background: full
                   ? "#2a2a3a"
                   : `linear-gradient(135deg, ${COLORS.persian}, ${COLORS.accent})`,
-                color: full && !registered ? COLORS.muted : "#fff",
+                color: full ? COLORS.muted : "#fff",
                 transition: "all 0.3s ease",
-                transform: animating ? "scale(0.97)" : "scale(1)",
                 letterSpacing: "0.03em",
               }}
             >
-              {registered ? "Registered" : full ? "Event Full" : animating ? "Registering..." : "Register Now"}
+              {full ? "Event Full" : "Register Now"}
             </button>
 
-            {!full && !registered && (
+            {!full && (
               <p style={{ textAlign: "center", fontSize: 12, color: COLORS.muted, margin: "12px 0 0" }}>
                 Free registration · Confirmation via email
               </p>
@@ -756,12 +771,584 @@ const EventDetails = ({ event, onBack }) => {
   );
 };
 
+function RegisterForm({ event, onBack, onHome }) {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    college: "",
+    year: "",
+    branch: "",
+    teamName: "",
+    teamSize: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [focused, setFocused] = useState(null);
+
+  const setField = (key) => (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: e.target.value,
+    }));
+  };
+
+  const focusedStyle = (key) =>
+    focused === key
+      ? {
+          borderColor: COLORS.persian,
+        }
+      : {};
+
+  const validate = () => {
+    const e = {};
+
+    if (!form.name.trim()) e.name = "Full name is required";
+    if (!form.email.trim()) e.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Enter a valid email";
+
+    if (!form.phone.trim()) e.phone = "Phone number is required";
+    else if (!/^\d{10}$/.test(form.phone.replace(/\D/g, ""))) e.phone = "Enter a 10-digit number";
+
+    if (!form.college.trim()) e.college = "College name is required";
+    if (!form.year) e.year = "Select your year";
+    if (!form.branch.trim()) e.branch = "Branch/Department is required";
+
+    return e;
+  };
+
+  const handleSubmit = () => {
+    const e = validate();
+    if (Object.keys(e).length) {
+      setErrors(e);
+      return;
+    }
+
+    setErrors({});
+    setSubmitting(true);
+
+    setTimeout(() => {
+      setSubmitting(false);
+      setSubmitted(true);
+    }, 1000);
+  };
+
+  if (submitted) {
+    return (
+      <PageShell
+        orbs={[
+          { x: "10%", y: "10%", color: event.color, size: 500 },
+          { x: "60%", y: "50%", color: COLORS.accent, size: 350 },
+        ]}
+      >
+        <SiteNav />
+        <div
+          style={{
+            minHeight: "calc(100vh - 64px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "40px 20px",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <div
+            style={{
+              background: COLORS.cardBg,
+              border: `1px solid ${COLORS.cardBorder}`,
+              borderRadius: 24,
+              padding: "60px 50px",
+              maxWidth: 480,
+              width: "100%",
+              textAlign: "center",
+              boxShadow: "0 30px 80px #00000060",
+            }}
+          >
+            <div
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: "50%",
+                margin: "0 auto 28px",
+                background: `linear-gradient(135deg, ${event.color}44, ${COLORS.accent}44)`,
+                border: `2px solid ${COLORS.accent}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 32,
+              }}
+            >
+              ✓
+            </div>
+
+            <h2
+              style={{
+                fontFamily: "'Syne', sans-serif",
+                fontWeight: 800,
+                fontSize: 28,
+                color: COLORS.white,
+                margin: "0 0 12px",
+              }}
+            >
+              You're registered!
+            </h2>
+
+            <p style={{ color: COLORS.muted, fontSize: 15, lineHeight: 1.7, margin: "0 0 6px" }}>
+              Successfully registered for
+            </p>
+
+            <p
+              style={{
+                color: COLORS.persianLight,
+                fontSize: 17,
+                fontWeight: 600,
+                margin: "0 0 28px",
+                fontFamily: "'Syne', sans-serif",
+              }}
+            >
+              {event.title}
+            </p>
+
+            <div
+              style={{
+                background: "#0a1035",
+                borderRadius: 12,
+                padding: "16px 20px",
+                marginBottom: 28,
+                textAlign: "left",
+              }}
+            >
+              {[
+                { label: "Date", val: event.date },
+                { label: "Time", val: event.time },
+                { label: "Venue", val: event.venue },
+              ].map((row) => (
+                <div
+                  key={row.label}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: 14,
+                    padding: "5px 0",
+                    borderBottom: `1px solid ${COLORS.cardBorder}`,
+                  }}
+                >
+                  <span style={{ color: COLORS.muted }}>{row.label}</span>
+                  <span style={{ color: COLORS.white, fontWeight: 500 }}>{row.val}</span>
+                </div>
+              ))}
+            </div>
+
+            <p style={{ fontSize: 13, color: COLORS.muted, marginBottom: 28 }}>
+              Confirmation sent to <strong style={{ color: COLORS.white }}>{form.email}</strong>
+            </p>
+
+            <div style={{ display: "flex", gap: 12 }}>
+              <button
+                onClick={onBack}
+                style={{
+                  flex: 1,
+                  padding: "13px 0",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  background: "transparent",
+                  border: `1px solid ${COLORS.cardBorder}`,
+                  color: COLORS.muted,
+                  fontSize: 14,
+                }}
+              >
+                ← Event Details
+              </button>
+              <button
+                onClick={onHome}
+                style={{
+                  flex: 1,
+                  padding: "13px 0",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  background: `linear-gradient(135deg, ${COLORS.persian}, ${COLORS.accent})`,
+                  border: "none",
+                  color: "#fff",
+                  fontSize: 14,
+                  fontWeight: 600,
+                }}
+              >
+                Browse Events →
+              </button>
+            </div>
+          </div>
+        </div>
+      </PageShell>
+    );
+  }
+
+  return (
+    <PageShell
+      orbs={[
+        { x: "-80px", y: "60px", color: event.color, size: 500 },
+        { x: "65%", y: "300px", color: COLORS.accent, size: 380 },
+        { x: "30%", y: "700px", color: COLORS.persian, size: 300 },
+      ]}
+    >
+      <SiteNav
+        action={
+          <button
+            onClick={onBack}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 18px",
+              borderRadius: 10,
+              background: COLORS.cardBg,
+              border: `1px solid ${COLORS.cardBorder}`,
+              color: COLORS.muted,
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+          >
+            ← Back
+          </button>
+        }
+      />
+
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 720, margin: "0 auto", padding: "50px 40px 30px" }}>
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 20,
+            padding: "8px 16px",
+            borderRadius: 40,
+            background: event.color + "18",
+            border: `1px solid ${event.color}44`,
+          }}
+        >
+          <div style={{ width: 8, height: 8, borderRadius: "50%", background: event.color }} />
+          <span style={{ fontSize: 13, color: event.color === "#1a3aff" ? COLORS.persianLight : event.color, fontWeight: 600 }}>
+            {event.title}
+          </span>
+          <span style={{ color: COLORS.muted, fontSize: 13 }}>·</span>
+          <span style={{ color: COLORS.muted, fontSize: 13 }}>{event.date}</span>
+        </div>
+
+        <h1
+          style={{
+            fontFamily: "'Syne', sans-serif",
+            fontWeight: 800,
+            margin: "0 0 12px",
+            fontSize: "clamp(28px, 4vw, 42px)",
+            color: COLORS.white,
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          Register for
+          <br />
+          <span
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.persianLight}, ${COLORS.accent})`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            {event.title}
+          </span>
+        </h1>
+
+        <p style={{ color: COLORS.muted, fontSize: 15, margin: 0 }}>
+          Fill in your details below. All required fields must be completed.
+        </p>
+      </div>
+
+      <div style={{ position: "relative", zIndex: 1, maxWidth: 720, margin: "0 auto", padding: "0 40px 80px" }}>
+        <div
+          style={{
+            background: COLORS.cardBg,
+            border: `1px solid ${COLORS.cardBorder}`,
+            borderRadius: 20,
+            overflow: "hidden",
+            boxShadow: "0 20px 60px #00000050",
+          }}
+        >
+          <div style={{ height: 5, background: `linear-gradient(90deg, ${event.color}, ${COLORS.accent})` }} />
+          <div style={{ padding: "36px 36px 40px" }}>
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    background: COLORS.persian + "33",
+                    border: `1px solid ${COLORS.persian}55`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 13,
+                  }}
+                >
+                  ①
+                </div>
+                <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 16, color: COLORS.white }}>
+                  Personal Information
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+                <Field label="Full Name *" error={errors.name}>
+                  <input
+                    value={form.name}
+                    onChange={setField("name")}
+                    onFocus={() => setFocused("name")}
+                    onBlur={() => setFocused(null)}
+                    placeholder="e.g. Rahul Sharma"
+                    style={{ ...inputStyle, ...focusedStyle("name") }}
+                  />
+                </Field>
+
+                <Field label="Email Address *" error={errors.email}>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={setField("email")}
+                    onFocus={() => setFocused("email")}
+                    onBlur={() => setFocused(null)}
+                    placeholder="you@college.edu"
+                    style={{ ...inputStyle, ...focusedStyle("email") }}
+                  />
+                </Field>
+
+                <Field label="Phone Number *" error={errors.phone}>
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={setField("phone")}
+                    onFocus={() => setFocused("phone")}
+                    onBlur={() => setFocused(null)}
+                    placeholder="10-digit mobile number"
+                    style={{ ...inputStyle, ...focusedStyle("phone") }}
+                  />
+                </Field>
+
+                <Field label="College / Institution *" error={errors.college}>
+                  <input
+                    value={form.college}
+                    onChange={setField("college")}
+                    onFocus={() => setFocused("college")}
+                    onBlur={() => setFocused(null)}
+                    placeholder="Your college name"
+                    style={{ ...inputStyle, ...focusedStyle("college") }}
+                  />
+                </Field>
+              </div>
+            </div>
+
+            <div style={{ borderTop: `1px solid ${COLORS.cardBorder}`, margin: "0 0 32px" }} />
+
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    background: COLORS.persian + "33",
+                    border: `1px solid ${COLORS.persian}55`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 13,
+                  }}
+                >
+                  ②
+                </div>
+                <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 16, color: COLORS.white }}>
+                  Academic Details
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+                <Field label="Year of Study *" error={errors.year}>
+                  <select
+                    value={form.year}
+                    onChange={setField("year")}
+                    onFocus={() => setFocused("year")}
+                    onBlur={() => setFocused(null)}
+                    style={{ ...inputStyle, ...focusedStyle("year"), cursor: "pointer" }}
+                  >
+                    <option value="">Select year</option>
+                    {["1st Year", "2nd Year", "3rd Year", "4th Year", "Postgraduate"].map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+
+                <Field label="Branch / Department *" error={errors.branch}>
+                  <input
+                    value={form.branch}
+                    onChange={setField("branch")}
+                    onFocus={() => setFocused("branch")}
+                    onBlur={() => setFocused(null)}
+                    placeholder="e.g. Computer Engineering"
+                    style={{ ...inputStyle, ...focusedStyle("branch") }}
+                  />
+                </Field>
+              </div>
+            </div>
+
+            <div style={{ borderTop: `1px solid ${COLORS.cardBorder}`, margin: "0 0 32px" }} />
+
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
+                <div
+                  style={{
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    background: COLORS.persian + "33",
+                    border: `1px solid ${COLORS.persian}55`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 13,
+                  }}
+                >
+                  ③
+                </div>
+                <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 16, color: COLORS.white }}>
+                  Event Preferences
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 18 }}>
+                <Field label="Team Name (if applicable)">
+                  <input
+                    value={form.teamName}
+                    onChange={setField("teamName")}
+                    onFocus={() => setFocused("teamName")}
+                    onBlur={() => setFocused(null)}
+                    placeholder="Leave blank if solo"
+                    style={{ ...inputStyle, ...focusedStyle("teamName") }}
+                  />
+                </Field>
+
+                <Field label="Team Size">
+                  <select
+                    value={form.teamSize}
+                    onChange={setField("teamSize")}
+                    onFocus={() => setFocused("teamSize")}
+                    onBlur={() => setFocused(null)}
+                    style={{ ...inputStyle, ...focusedStyle("teamSize"), cursor: "pointer" }}
+                  >
+                    <option value="">Select size</option>
+                    {["Solo (1)", "2 members", "3 members", "4 members", "5 members"].map((size) => (
+                      <option key={size} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              </div>
+
+              <Field label="Message / Special Requirements">
+                <textarea
+                  value={form.message}
+                  onChange={setField("message")}
+                  onFocus={() => setFocused("message")}
+                  onBlur={() => setFocused(null)}
+                  placeholder="Dietary restrictions, accessibility needs, or questions..."
+                  rows={4}
+                  style={{ ...inputStyle, ...focusedStyle("message"), resize: "vertical", lineHeight: 1.6 }}
+                />
+              </Field>
+            </div>
+
+            <div
+              style={{
+                padding: "14px 18px",
+                borderRadius: 10,
+                background: "#0a1035",
+                border: `1px solid ${COLORS.cardBorder}`,
+                marginBottom: 28,
+              }}
+            >
+              <p style={{ margin: 0, fontSize: 13, color: COLORS.muted, lineHeight: 1.6 }}>
+                By registering, you agree to the event's terms and conditions and confirm the information is accurate.
+              </p>
+            </div>
+
+            <button
+              onClick={handleSubmit}
+              style={{
+                width: "100%",
+                padding: "16px 0",
+                borderRadius: 12,
+                border: "none",
+                cursor: "pointer",
+                fontSize: 16,
+                fontWeight: 700,
+                letterSpacing: "0.03em",
+                background: submitting
+                  ? COLORS.cardBorder
+                  : `linear-gradient(135deg, ${COLORS.persian}, ${COLORS.accent})`,
+                color: "#fff",
+                transition: "all 0.3s ease",
+                transform: submitting ? "scale(0.99)" : "scale(1)",
+              }}
+            >
+              {submitting ? "Submitting..." : "Complete Registration →"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </PageShell>
+  );
+}
+
+const PAGE = {
+  LISTING: "LISTING",
+  DETAILS: "DETAILS",
+  REGISTER: "REGISTER",
+};
+
 export default function EventsPage() {
+  const [page, setPage] = useState(PAGE.LISTING);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  return selectedEvent ? (
-    <EventDetails event={selectedEvent} onBack={() => setSelectedEvent(null)} />
-  ) : (
-    <EventsListing onSelect={setSelectedEvent} />
-  );
+  const goListing = () => {
+    setSelectedEvent(null);
+    setPage(PAGE.LISTING);
+  };
+
+  const goDetails = (event) => {
+    setSelectedEvent(event);
+    setPage(PAGE.DETAILS);
+  };
+
+  const goRegister = (event) => {
+    setSelectedEvent(event);
+    setPage(PAGE.REGISTER);
+  };
+
+  if (page === PAGE.LISTING) {
+    return <EventsListing onSelect={goDetails} />;
+  }
+
+  if (page === PAGE.DETAILS) {
+    return <EventDetails event={selectedEvent} onBack={goListing} onRegister={goRegister} />;
+  }
+
+  if (page === PAGE.REGISTER) {
+    return <RegisterForm event={selectedEvent} onBack={() => goDetails(selectedEvent)} onHome={goListing} />;
+  }
+
+  return null;
 }
